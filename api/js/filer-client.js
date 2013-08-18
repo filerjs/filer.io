@@ -3,7 +3,7 @@
   var origin = window.location.origin.toString();
 
   var iframe = document.createElement("IFRAME");
-  iframe.setAttribute("src", "http://filer.io/api/");
+  iframe.setAttribute("src", "http://filer.io/api/?origin=" + origin);
   iframe.style.display = "none";
   document.body.appendChild(iframe);
 
@@ -19,16 +19,10 @@
     this.stat = function stat(path, callback) {
 
     };
-
-    this.fstat = function fstat(path, callback) {
-
-    };
   };
 
   iframe.addEventListener('load', function() {
-    window.Filer = {
-      FileSystem = FileSystemProxy;
-    }
+    winder.filer = new FileSystemProxy();
   });
 
 })();
