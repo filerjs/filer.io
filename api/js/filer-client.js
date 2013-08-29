@@ -64,4 +64,5 @@
   });
 
   window.addEventListener('message', receiveMessage, false);
+
 })();
