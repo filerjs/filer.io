@@ -6,7 +6,7 @@
   var iframe = document.createElement("IFRAME");
   iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
   iframe.style.display = "none";
-  document.appendChild(iframe);
+  document.body.appendChild(iframe);
 
   var queue = {};
 
