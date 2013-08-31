@@ -7,10 +7,12 @@
 </script>
 
 <script>
-  filer.stat('/', function(err, stats) {
-    if(err) throw err;
+  window.addEventListener('load', function() {
+    filer.stat('/', function(err, stats) {
+      if(err) throw err;
 
-    console.log(stats);
+      console.log(stats);
+    });
   });
 </script>
 

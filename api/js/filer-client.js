@@ -1,5 +1,5 @@
 (function() {
-  document.addEventListener('load', function() {
+  window.addEventListener('load', function() {
     var origin = window.location.origin.toString();
     var targetOrigin = "http://filer.io";
 
