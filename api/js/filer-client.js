@@ -6,7 +6,7 @@
   var iframe = document.createElement("IFRAME");
   iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
   iframe.style.display = "none";
-  document.body.appendChild(iframe);
+  document.appendChild(iframe);
 
   var queue = {};
 
@@ -59,10 +59,7 @@
     sendMessage(new Request("stat", [path]));
   };
 
-  iframe.addEventListener('load', function() {
-    window.filer = new FileSystemProxy();
-  });
-
+  window.filer = new FileSystemProxy();
   window.addEventListener('message', receiveMessage, false);
 
 })();
