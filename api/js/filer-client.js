@@ -1,65 +1,66 @@
 (function() {
+  document.addEventListener('load', function() {
+    var origin = window.location.origin.toString();
+    var targetOrigin = "http://filer.io";
 
-  var origin = window.location.origin.toString();
-  var targetOrigin = "http://filer.io";
+    var iframe = document.createElement("IFRAME");
+    iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
 
-  var iframe = document.createElement("IFRAME");
-  iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
-  iframe.style.display = "none";
-  document.body.appendChild(iframe);
+    var queue = {};
 
-  var queue = {};
-
-  function guid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-      return v.toString(16);
-    }).toUpperCase();
-  };
-
-  function Request(method, args) {
-    this.id = guid();
-    this.transfer = [];
-
-    args.forEach(function(arg) {
-      if(arg instanceof ArrayBuffer) {
-        this.transfer.push(arg);
-      }
-    });
-
-    this.message = {
-      method: method,
-      args: args
+    function guid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+      }).toUpperCase();
     };
-  };
 
-  function sendMessage(rpc, callback) {
-    iframe.contentWindow.postMessage(rpc.message, targetOrigin, rpc.transfer);
-    queue[rpc.id] = callback;
-  };
+    function Request(method, args) {
+      this.id = guid();
+      this.transfer = [];
 
-  function receiveMessage(event) {
-    if(targetOrigin !== event.origin ||
-       iframe !== event.source) {
-      return;
-    }
+      args.forEach(function(arg) {
+        if(arg instanceof ArrayBuffer) {
+          this.transfer.push(arg);
+        }
+      });
 
-    var data = event.data;
-    if(!queue.hasOwnProperty(data.id)) {
-      return;
-    }
+      this.message = {
+        method: method,
+        args: args
+      };
+    };
 
-    queue[data.id].apply(undefined, data.args);
-    delete queue[data.id];
-  };
+    function sendMessage(rpc, callback) {
+      iframe.contentWindow.postMessage(rpc.message, targetOrigin, rpc.transfer);
+      queue[rpc.id] = callback;
+    };
 
-  function FileSystemProxy() {
-  };
-  FileSystemProxy.prototype.stat = function stat(path, callback) {
-    sendMessage(new Request("stat", [path]));
-  };
+    function receiveMessage(event) {
+      if(targetOrigin !== event.origin ||
+         iframe !== event.source) {
+        return;
+      }
 
-  window.filer = new FileSystemProxy();
-  window.addEventListener('message', receiveMessage, false);
+      var data = event.data;
+      if(!queue.hasOwnProperty(data.id)) {
+        return;
+      }
 
+      queue[data.id].apply(undefined, data.args);
+      delete queue[data.id];
+    };
+
+    function FileSystemProxy() {
+    };
+    FileSystemProxy.prototype.stat = function stat(path, callback) {
+      sendMessage(new Request("stat", [path]));
+    };
+
+    window.filer = new FileSystemProxy();
+    window.addEventListener('message', receiveMessage, false);
+
+  });
 })();
