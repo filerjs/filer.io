@@ -2,6 +2,7 @@
   var origin = "http://filer.io";
   var targetOrigin = window.location.toString().split('?')[1];
 	var fs = new IDBFS.FileSystem('filer');
+  console.log(fs);
 
   function Response(args) {
     this.id = guid();
