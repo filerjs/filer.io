@@ -34,7 +34,7 @@
   };
 
   function sendMessage(rpc, callback) {
-    iframe.postMessage(rpc.message, targetOrigin, rpc.transfer);
+    iframe.contentWindow.postMessage(rpc.message, targetOrigin, rpc.transfer);
     queue[rpc.id] = callback;
   };
 
