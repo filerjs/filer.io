@@ -1,0 +1,17 @@
+<html>
+
+<body>
+</body>
+
+<script src="http://filer.io/api/js/filer-client.js">
+</script>
+
+<script>
+  filer.stat('/', function(err, stats) {
+    if(err) throw err;
+
+    console.log(stats);
+  });
+</script>
+
+</html>
