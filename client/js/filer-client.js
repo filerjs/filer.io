@@ -1,12 +1,14 @@
 (function() {
-  window.addEventListener('load', function() {
-    var origin = window.location.origin.toString();
-    var targetOrigin = "http://filer.io";
+  var origin = window.location.origin.toString();
+  // var targetOrigin = "http://filer.io";
+  var targetOrigin = "http://local.filer.io/~ack/work/filer.io";
 
-    var iframe = document.createElement("IFRAME");
-    iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
+  var iframe = document.createElement("IFRAME");
+  iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  window.addEventListener('load', function() {
 
     var queue = {};
 
