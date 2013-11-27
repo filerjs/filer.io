@@ -9,12 +9,25 @@
   document.body.appendChild(iframe);
 
   window.addEventListener('load', function() {
-    iframe.contentWindow.postMessage('hello world', '*');
+    var pending = {};
 
     function Filer() {
-    };
-    Filer.prototype.stat = function stat(path, callback) {
-      sendMessage(new Request("stat", [path]));
+      var nextRpcId = 1;
+
+      function send(data) {
+        iframe.contentWindow.postMessage(data, targetOrigin);
+      }
+
+      this.stat = function stat(path, callback) {
+        var rpcId = nextRpcId ++;
+        pending[rpcId] = callback;
+        send(
+          {
+            'id': rpcId,
+            'method': 'stat',
+            'args': [path]
+          });
+      }
     };
 
     window.filer = new Filer();
@@ -26,6 +39,12 @@
       if(targetOrigin !== event.origin) {
         return
       }
+
+      var data = event.data;
+      var rpcId = data['id'];
+      var rArgs = data['rArgs'];
+      pending[rpcId].apply(undefined, rArgs);
+      delete pending[rpcId];
     };
 
     window.addEventListener('message', receiveMessage, false);

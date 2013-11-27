@@ -12,7 +12,18 @@
 
     var source = event.source;
     var data = event.data;
-    source.postMessage(data, targetOrigin);
+    var rpcId = data['id'];
+    var method = data['method'];
+    var args = data['args'];
+
+    args.push(function() {
+      rArgs = Array.prototype.slice.call(arguments);
+      source.postMessage({
+        'id': rpcId,
+        'rArgs': rArgs
+        }, targetOrigin);
+    });
+    fs[method].apply(fs, args);
   };
 
 	window.addEventListener('message', receiveMessage, false);
