@@ -3,11 +3,12 @@
 <body>
 </body>
 
-<script src="http://local.filer.io/~ack/work/filer.io/api/js/filer-client.js">
+<script src="http://filer.io/~ack/work/filer.io/client/js/filer-client.js">
 </script>
 
 <script>
   window.addEventListener('load', function() {
+    console.info('filer:', filer);
 /*
     filer.stat('/', function(err, stats) {
       if(err) throw err;

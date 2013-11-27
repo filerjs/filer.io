@@ -1,68 +1,33 @@
 (function() {
   var origin = window.location.origin.toString();
-  // var targetOrigin = "http://filer.io";
-  var targetOrigin = "http://local.filer.io/~ack/work/filer.io";
+  var targetOrigin = "http://filer.io";
+  var iframeSrc = targetOrigin + "/~ack/work/filer.io/iframe/?origin=" + origin;
 
   var iframe = document.createElement("IFRAME");
-  iframe.setAttribute("src", targetOrigin + "/iframe/?origin=" + origin);
+  iframe.setAttribute("src", iframeSrc);
   iframe.style.display = "none";
   document.body.appendChild(iframe);
 
   window.addEventListener('load', function() {
+    iframe.contentWindow.postMessage('hello world', '*');
 
-    var queue = {};
-
-    function guid() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-        return v.toString(16);
-      }).toUpperCase();
+    function Filer() {
     };
-
-    function Request(method, args) {
-      this.id = guid();
-      this.transfer = [];
-
-      args.forEach(function(arg) {
-        if(arg instanceof ArrayBuffer) {
-          this.transfer.push(arg);
-        }
-      });
-
-      this.message = {
-        method: method,
-        args: args
-      };
-    };
-
-    function sendMessage(rpc, callback) {
-      iframe.contentWindow.postMessage(rpc.message, targetOrigin, rpc.transfer);
-      queue[rpc.id] = callback;
-    };
-
-    function receiveMessage(event) {
-      if(targetOrigin !== event.origin ||
-         iframe !== event.source) {
-        return;
-      }
-
-      var data = event.data;
-      if(!queue.hasOwnProperty(data.id)) {
-        return;
-      }
-
-      queue[data.id].apply(undefined, data.args);
-      delete queue[data.id];
-    };
-
-    function FileSystemProxy() {
-    };
-    FileSystemProxy.prototype.stat = function stat(path, callback) {
+    Filer.prototype.stat = function stat(path, callback) {
       sendMessage(new Request("stat", [path]));
     };
 
-    window.filer = new FileSystemProxy();
-    window.addEventListener('message', receiveMessage, false);
+    window.filer = new Filer();
 
+    function receiveMessage(event) {
+      console.info('client:', event.origin, event.data);
+      console.info('client:', document.domain)
+
+      if(targetOrigin !== event.origin) {
+        return
+      }
+    };
+
+    window.addEventListener('message', receiveMessage, false);
   });
 })();

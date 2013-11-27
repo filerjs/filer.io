@@ -1,41 +1,19 @@
 (function() {
-    var targetOrigin = window.location.toString().split('?')[1].split('=')[1];
-  	var fs = new IDBFS.FileSystem('filer');
-/*
-    function Response(args) {
-      this.id = guid();
-      this.transfer = [];
+  var targetOrigin = window.location.toString().split('?')[1].split('=')[1];
+	var fs = new IDBFS.FileSystem('filer', 'FORMAT');
 
-      args.forEach(function(arg) {
-        if(arg instanceof ArrayBuffer) {
-          this.transfer.push(arg);
-        }
-      });
+  function receiveMessage(event) {
+    console.info('iframe:', event.origin, event.data);
+    console.info('iframe:', document.domain)
 
-      this.message = {
-        method: method,
-        args: args
-      };
-    };
+    if(targetOrigin !== event.origin) {
+      return
+    }
 
-    function sendMessage(target, rpc, callback) {
-      target.postMessage(rpc.message, targetOrigin, rpc.transfer);
-    };
+    var source = event.source;
+    var data = event.data;
+    source.postMessage(data, targetOrigin);
+  };
 
-    function receiveMessage(event) {
-      if(targetOrigin !== event.origin) {
-        return;
-      }
-
-      var source = event.source;
-      var data = event.data;
-      fs[data.message.method].apply(undefined, data.message.args,
-        function() {
-          sendMessage(source, new Response())
-        }
-      );
-    };
-
-  	window.addEventListener('message', receiveMessage, false);
-*/
+	window.addEventListener('message', receiveMessage, false);
 })();
