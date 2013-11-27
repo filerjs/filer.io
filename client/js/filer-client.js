@@ -1,7 +1,7 @@
 (function() {
   var origin = window.location.origin.toString();
   var targetOrigin = "http://filer.io";
-  var iframeSrc = targetOrigin + "/~ack/work/filer.io/iframe/?origin=" + origin;
+  var iframeSrc = targetOrigin + "/iframe/?origin=" + origin;
 
   var iframe = document.createElement("IFRAME");
   iframe.setAttribute("src", iframeSrc);
